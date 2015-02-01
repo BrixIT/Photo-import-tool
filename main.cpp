@@ -14,13 +14,28 @@ bool has_dir(GFileEnumerator *enumerator, const char *searchName) {
     return false;
 }
 
+int get_file_count(GFile *dir){
+    GFileEnumerator *enumerator = g_file_enumerate_children(dir,
+            "standard::name",
+            G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+            NULL,
+            NULL);
+
+    GFileInfo *info;
+    int count = 0;
+    while ((info = g_file_enumerator_next_file(enumerator, NULL, NULL)) != NULL) {
+        count++;
+    }
+    return count;
+}
+
 void move_pictures(const char *src, const char *dest) {
     GFile *search_root = g_file_new_for_commandline_arg(src);
     GFile *dest_gfile = g_file_new_for_commandline_arg(dest);
     GFile *target;
     GFile *src_file;
     GFileCopyFlags flags = G_FILE_COPY_OVERWRITE;
-
+    int total = get_file_count(search_root);
     GFileEnumerator *enumerator = g_file_enumerate_children(search_root,
             "standard::name",
             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
@@ -28,7 +43,9 @@ void move_pictures(const char *src, const char *dest) {
             NULL);
 
     GFileInfo *info;
+    int i = 0;
     while ((info = g_file_enumerator_next_file(enumerator, NULL, NULL)) != NULL) {
+        std::cout << "Importeren van foto " << i+1 << " van " << total << std::endl;
         const char *filename = g_file_info_get_name(info);
         std::string source_file = std::string(src);
         source_file.append("/");
@@ -36,6 +53,7 @@ void move_pictures(const char *src, const char *dest) {
         target = g_file_get_child (dest_gfile, filename);
         src_file = g_file_new_for_commandline_arg(source_file.c_str());
         g_file_move(src_file,target, flags, NULL, NULL, NULL, NULL);
+        i++;
     }
 }
 
@@ -96,8 +114,9 @@ int main(int argc, char *argv[]) {
             std::string picture_dir = std::string(dcim_path);
             picture_dir.append("/");
             picture_dir.append(picture_dir_name);
-            std::cout << "Foto pad is " << picture_dir << std::endl;
+            std::cout << "Foto pad is " << picture_dir << std::endl << std::endl;
             move_pictures(picture_dir.c_str(),argv[1]);
+            std::cout << std::endl << "Foto's importeren voltooid" << std::endl;
         } else {
             std::cout << name << " bevat geen DCIM map" << std::endl;
         }
