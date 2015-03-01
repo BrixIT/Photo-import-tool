@@ -2,9 +2,16 @@
 #include <iostream>
 
 PhotoImport::PhotoImport()
-        : m_button("Hello World")   // creates a new button with label "Hello World".
-{
-    // Sets the border width of the window.
+        : m_button("Import"),   // creates a new button with label "Hello World".
+          m_box(Gtk::ORIENTATION_VERTICAL, 4),
+          m_label_count("Searching for pictures to import"),
+          m_progressbar(),
+          m_entry_name() {
+
+    // Sets window title
+    set_title("Picture import");
+
+    // Sets the padding inside the window.
     set_border_width(10);
 
     // When the button receives the "clicked" signal, it will call the
@@ -12,18 +19,41 @@ PhotoImport::PhotoImport()
     m_button.signal_clicked().connect(sigc::mem_fun(*this,
             &PhotoImport::on_button_clicked));
 
-    // This packs the button into the Window (a container).
-    add(m_button);
+    // Pack all widgets in the vbox
+    m_box.add(m_label_count);
+    m_box.add(m_entry_name);
+    m_box.add(m_progressbar);
+    m_box.add(m_button);
+    add(m_box);
+
+    m_searching = true;
+
+    m_progressbar.pulse();
 
     // The final step is to display this newly created widget...
+    m_label_count.show();
+    m_entry_name.show();
+    m_progressbar.show();
     m_button.show();
+    m_box.show();
+
+    sigc::slot<bool> timer_slot = sigc::mem_fun(*this,
+                   &PhotoImport::on_timeout);
+
+    m_timer = Glib::signal_timeout().connect(timer_slot, 50);
+
 }
 
-PhotoImport::~PhotoImport()
-{
+PhotoImport::~PhotoImport() {
 }
 
-void PhotoImport::on_button_clicked()
-{
+void PhotoImport::on_button_clicked() {
     std::cout << "Hello World" << std::endl;
+}
+
+bool PhotoImport::on_timeout() {
+    if (m_searching) {
+        m_progressbar.pulse();
+    }
+    return true;
 }
