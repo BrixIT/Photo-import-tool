@@ -6,6 +6,7 @@ directory and manage it with the filemanager.
 
 ```bash
 sudo apt-get install build-essential libgtkmm-3.0-dev
+# Clone this repository and cd into the directory
 mkdir build
 cd build
 cmake ..
