@@ -10,16 +10,17 @@
 #include <gtkmm/progressbar.h>
 #include <glibmm.h>
 
-class PhotoImport : public Gtk::Window
-{
+class PhotoImport : public Gtk::Window {
 
 public:
     PhotoImport();
+
     virtual ~PhotoImport();
 
 protected:
     //Signal handlers:
     void on_button_clicked();
+
     bool on_timeout();
 
     //Main container for window

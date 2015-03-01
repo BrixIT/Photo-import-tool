@@ -30,18 +30,12 @@ PhotoImport::PhotoImport()
 
     m_progressbar.pulse();
 
-    // The final step is to display this newly created widget...
-    m_label_count.show();
-    m_entry_name.show();
-    m_progressbar.show();
-    m_button.show();
-    m_box.show();
-
     sigc::slot<bool> timer_slot = sigc::mem_fun(*this,
-                   &PhotoImport::on_timeout);
+            &PhotoImport::on_timeout);
 
     Glib::signal_timeout().connect(timer_slot, 50);
 
+    show_all_children();
 }
 
 PhotoImport::~PhotoImport() {
