@@ -31,7 +31,6 @@ protected:
     Gtk::ProgressBar m_progressbar;
     Gtk::Button m_button;
 
-    sigc::connection m_timer;
     bool m_searching;
 };
 

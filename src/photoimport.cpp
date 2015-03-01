@@ -40,7 +40,7 @@ PhotoImport::PhotoImport()
     sigc::slot<bool> timer_slot = sigc::mem_fun(*this,
                    &PhotoImport::on_timeout);
 
-    m_timer = Glib::signal_timeout().connect(timer_slot, 50);
+    Glib::signal_timeout().connect(timer_slot, 50);
 
 }
 
